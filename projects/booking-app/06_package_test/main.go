@@ -1,7 +1,7 @@
 package main
 
 import (
-	"booking-app/helper"
+	"booking-app/06_package_test/helper"
 	"fmt"
 	"strings"
 )
@@ -13,16 +13,16 @@ var remainingTickets uint = 50
 var bookings []string //在中括号内指定数字后就表明这个数组是固定size，反之则是可以动态扩展的数组.
 
 func main() {
-	greetUser()
+	helper.GreetUser(conferenceName, conferenceTickets, remainingTickets)
 
 	for {
-		firstName, lastName, email, userTickets := getUserInput()
-		isValidName, isValidEmail, isValidUserTickes := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
+		firstName, lastName, email, userTickets := helper.GetUserInput()
+		isValidName, isValidEmail, isValidUserTickes := validateUserInput(firstName, lastName, email, userTickets)
 
 		if isValidName && isValidEmail && isValidUserTickes {
 			bookTickets(userTickets, firstName, lastName, email)
 
-			firstNames := getFirstNames()
+			firstNames := helper.GetFirstNames(bookings)
 			fmt.Printf("The first names of bookings are : %v\n", firstNames)
 
 			if remainingTickets == 0 {
@@ -42,27 +42,13 @@ func main() {
 
 			if !isValidUserTickes {
 				fmt.Println("number of you entered is invalid.")
+				fmt.Printf("Remaining tickets : %v, but you entered %v\n", remainingTickets, userTickets)
 			}
 
 			fmt.Println("Your input data is invalid, please try again.")
+			continue
 		}
 	}
-}
-
-func greetUser() {
-	fmt.Printf("Welcome to %v booking application.\n", conferenceName)
-	fmt.Printf("We have total of %v tickets, and %v are still avaliabel.\n", conferenceTickets, remainingTickets)
-	fmt.Printf("Get your tickets to attend.\n")
-}
-
-func getFirstNames() []string {
-	firstNames := []string{}
-	for _, booking := range bookings {
-		var names = strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
-	}
-	return firstNames
-
 }
 
 func validateUserInput(firstName string, lastName string, email string, userTickets uint) (bool, bool, bool) {
@@ -71,28 +57,6 @@ func validateUserInput(firstName string, lastName string, email string, userTick
 	isValidUserTickes := userTickets > 0 && userTickets <= remainingTickets
 
 	return isValidName, isValidEmail, isValidUserTickes
-
-}
-
-func getUserInput() (string, string, string, uint) {
-	var firstName string
-	var lastName string
-	var email string
-	var userTickets uint
-
-	// asking your info
-	fmt.Println("Enter your first name: ")
-	fmt.Scanln(&firstName)
-
-	fmt.Println("Enter your lastr name: ")
-	fmt.Scanln(&lastName)
-
-	fmt.Println("Enter your email: ")
-	fmt.Scanln(&email)
-
-	fmt.Println("Enter your number of tickets: ")
-	fmt.Scanln(&userTickets)
-	return firstName, lastName, email, userTickets
 
 }
 
