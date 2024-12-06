@@ -1,9 +1,8 @@
 package main
 
 import (
-	"booking-app/07_package_map/helper"
+	"booking-app/08_package_structs/helper"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -11,7 +10,14 @@ const conferenceTickets uint = 50
 
 var conferenceName = "Go Conference"
 var remainingTickets uint = 50
-var bookings = make([]map[string]string, 0)
+var bookings = make([]User, 0)
+
+type User struct {
+	firstName       string
+	lastName        string
+	email           string
+	numberOfTickets uint
+}
 
 func main() {
 	helper.GreetUser(conferenceName, conferenceTickets, remainingTickets)
@@ -23,7 +29,7 @@ func main() {
 		if isValidName && isValidEmail && isValidUserTickes {
 			bookTickets(userTickets, firstName, lastName, email)
 
-			firstNames := helper.GetFirstNames(bookings)
+			firstNames := getFirstNames(bookings)
 			fmt.Printf("The first names of bookings are : %v\n", firstNames)
 
 			if remainingTickets == 0 {
@@ -61,15 +67,26 @@ func validateUserInput(firstName string, lastName string, email string, userTick
 
 }
 
+func getFirstNames(bookings []User) []string {
+	firstNames := []string{}
+	for _, booking := range bookings {
+		firstNames = append(firstNames, booking.firstName)
+	}
+	return firstNames
+
+}
+
 func bookTickets(userTickets uint, firstName string, lastName string, email string) uint {
 	// book ticket in system
 	remainingTickets = remainingTickets - userTickets
-	// create user map
-	var user = make(map[string]string)
-	user["firstName"] = firstName
-	user["lastName"] = lastName
-	user["email"] = email
-	user["numberOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+	// create user struct
+	var user = User{
+		firstName:       firstName,
+		lastName:        lastName,
+		email:           email,
+		numberOfTickets: userTickets,
+	}
+
 	bookings = append(bookings, user)
 
 	fmt.Printf("Thank you  %v %v for booking %v tickets, you will recevie an email at %v \n", firstName, lastName, userTickets, email)
